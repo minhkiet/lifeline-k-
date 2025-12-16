@@ -127,7 +127,7 @@ const App: React.FC = () => {
                   title="Visit VeeverseAI"
                >
                   <span className="text-teal-400">V</span>
-                  <span>eeverseAI</span>
+                  <span className="hidden sm:inline">eeverseAI</span>
                </a>
 
                {/* GitHub Link */}
@@ -150,12 +150,14 @@ const App: React.FC = () => {
                   {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
                </button>
 
+               {/* Language Toggle */}
                <button
                   onClick={toggleLanguage}
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-gray-200 text-xs font-medium transition-colors"
                >
-                  <Languages size={14} />
-                  {lang === 'en' ? '中文' : 'English'}
+                  <Languages size={14} className="hidden sm:inline" />
+                  <span className="hidden sm:inline">{lang === 'en' ? '中文' : 'English'}</span>
+                  <span className="sm:hidden">{lang === 'en' ? 'CN' : 'EN'}</span>
                </button>
             </div>
           </div>
@@ -181,7 +183,7 @@ const App: React.FC = () => {
             </div>
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
              {/* VeeverseAI Logo */}
              <a
                 href="https://veeverseai.cn/"
@@ -191,7 +193,7 @@ const App: React.FC = () => {
                 title="Visit VeeverseAI"
              >
                 <span className="text-purple-600 dark:text-purple-400">V</span>
-                <span>eeverseAI</span>
+                <span className="hidden sm:inline">eeverseAI</span>
              </a>
 
              {/* GitHub Link */}
@@ -214,20 +216,22 @@ const App: React.FC = () => {
                 {theme === 'light' ? <Moon size={16} /> : <Sun size={16} />}
              </button>
 
+             {/* Language Toggle */}
              <button
                 onClick={toggleLanguage}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 text-xs font-medium transition-colors"
              >
-                <Languages size={14} />
-                {lang === 'en' ? '中文' : 'English'}
+                <Languages size={14} className="hidden sm:inline" />
+                <span className="hidden sm:inline">{lang === 'en' ? '中文' : 'English'}</span>
+                <span className="sm:hidden">{lang === 'en' ? 'CN' : 'EN'}</span>
              </button>
 
              {step !== 'input' && (
                 <button
                     onClick={handleReset}
-                    className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors ml-1"
+                    className="text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors ml-1 hidden sm:flex items-center"
                 >
-                    ← <span className="hidden sm:inline">{t.newReading}</span>
+                    ← <span className="ml-1">{t.newReading}</span>
                 </button>
              )}
           </div>
