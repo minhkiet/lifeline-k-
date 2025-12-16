@@ -192,6 +192,18 @@ const App: React.FC = () => {
           </div>
           
           <div className="flex items-center gap-3">
+             {/* VeeverseAI Logo */}
+             <a
+                href="https://veeverseai.cn/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white text-xs font-semibold transition-all flex items-center gap-1.5 border border-gray-200 dark:border-slate-600 hover:border-purple-500/50 dark:hover:border-purple-500/50"
+                title="Visit VeeverseAI"
+             >
+                <span className="text-purple-600 dark:text-purple-400">V</span>
+                <span>eeverseAI</span>
+             </a>
+
              {/* GitHub Link */}
              <a
                 href="https://github.com/XIAOEEN/lifeline-k-"
