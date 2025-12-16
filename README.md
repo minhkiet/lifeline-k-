@@ -119,7 +119,7 @@ npm run dev
 # 或者使用pm2启动
 # 安装pm2
 #  npm install -g pm2
- pm2 start ecosystem.config.cjs --only life-destiny-k-line-prod
+ pm2 start ecosystem.config.cjs --only life-destiny-k-line
 ```
 
 
