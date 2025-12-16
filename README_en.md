@@ -144,32 +144,6 @@ VITE_GEMINI_API_KEY=your_api_key
 VITE_BASE_URL=https://api.gpt.ge/v1/
 ```
 
-## 📁 Project Structure
-
-```
-life-destiny-k-line/
-├── src/
-│   ├── components/          # React components
-│   │   ├── InputForm.tsx    # Input form
-│   │   ├── BaZiDisplay.tsx  # BaZi display
-│   │   ├── BaZiConfirmation.tsx  # Confirmation page
-│   │   ├── KLineChart.tsx   # K-line chart
-│   │   └── AnalysisSection.tsx   # Analysis report
-│   ├── services/            # Service layer
-│   │   └── geminiService.ts # AI API calls
-│   ├── types.ts             # TypeScript type definitions
-│   ├── locales.ts           # Multi-language configuration
-│   ├── constants.ts         # Constants
-│   ├── App.tsx              # Main app component
-│   └── index.tsx            # App entry point
-├── public/                  # Static assets
-├── .env.local              # Environment variables (create yourself)
-├── package.json            # Project configuration
-├── tsconfig.json           # TypeScript configuration
-├── vite.config.ts          # Vite configuration
-└── README.md               # Project documentation
-```
-
 ## 🎨 User Guide
 
 1. **Enter Birth Information**

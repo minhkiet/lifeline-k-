@@ -119,7 +119,7 @@ npm run dev
 # 或者使用pm2启动
 # 安装pm2
 #  npm install -g pm2
- pm2 start ecosystem.config.js --only life-destiny-k-line-prod
+ pm2 start ecosystem.config.cjs --only life-destiny-k-line-prod
 ```
 
 
@@ -149,32 +149,6 @@ VITE_BASE_URL=
 ```env
 VITE_GEMINI_API_KEY=your_api_key
 VITE_BASE_URL=https://api.gpt.ge/v1/
-```
-
-## 📁 项目结构
-
-```
-life-destiny-k-line/
-├── src/
-│   ├── components/          # React 组件
-│   │   ├── InputForm.tsx    # 输入表单
-│   │   ├── BaZiDisplay.tsx  # 八字显示
-│   │   ├── BaZiConfirmation.tsx  # 确认页面
-│   │   ├── KLineChart.tsx   # K线图表
-│   │   └── AnalysisSection.tsx   # 分析报告
-│   ├── services/            # 服务层
-│   │   └── geminiService.ts # AI API 调用
-│   ├── types.ts             # TypeScript 类型定义
-│   ├── locales.ts           # 多语言配置
-│   ├── constants.ts         # 常量配置
-│   ├── App.tsx              # 主应用组件
-│   └── index.tsx            # 应用入口
-├── public/                  # 静态资源
-├── .env.local              # 环境变量（需自行创建）
-├── package.json            # 项目配置
-├── tsconfig.json           # TypeScript 配置
-├── vite.config.ts          # Vite 配置
-└── README.md               # 项目文档
 ```
 
 ## 🎨 使用指南
