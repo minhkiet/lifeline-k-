@@ -171,7 +171,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-slate-900 flex flex-col font-sans transition-colors duration-200">
       {/* Header */}
-      <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 sticky top-0 z-40 transition-colors duration-200">
+      <header className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 sticky top-0 z-40 transition-colors duration-200 print:hidden" data-html2canvas-ignore="true">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={handleReset}>
             <div className="bg-black dark:bg-slate-700 text-white p-1.5 rounded-lg transition-colors">
@@ -289,7 +289,7 @@ const App: React.FC = () => {
       </main>
 
       {/* Simple Footer */}
-      <footer className="bg-white dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700 py-6 mt-auto print:hidden transition-colors">
+      <footer className="bg-white dark:bg-slate-800 border-t border-gray-100 dark:border-slate-700 py-6 mt-auto print:hidden transition-colors" data-html2canvas-ignore="true">
         <div className="max-w-5xl mx-auto px-4 text-center text-gray-400 dark:text-gray-500 text-sm">
             <p>&copy; {new Date().getFullYear()} {t.appTitle}. {t.footer}</p>
         </div>

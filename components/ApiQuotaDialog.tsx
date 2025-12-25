@@ -34,7 +34,7 @@ const ApiQuotaDialog: React.FC<ApiQuotaDialogProps> = ({ isOpen, onClose, lang }
   const t = texts[lang];
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4" style={{ animation: 'fadeIn 0.3s ease-in-out' }}>
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 print:hidden" style={{ animation: 'fadeIn 0.3s ease-in-out' }} data-html2canvas-ignore="true">
       {/* Backdrop */}
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm"
