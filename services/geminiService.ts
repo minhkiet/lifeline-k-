@@ -198,7 +198,17 @@ IMPORTANT: The timeline array must contain EXACTLY 100 entries.
 // 1. Calculate BaZi (Preliminary Step)
 // ------------------------------------------------------------------
 
-export const calculateBaZi = async (input: UserInput): Promise<BaZiResult> => {
+export const calculateBaZi = async (input: UserInput, lang: Language = 'en'): Promise<BaZiResult> => {
+  // Determine language instruction for lunar date
+  let langInstruction: string;
+  if (lang === 'zh') {
+    langInstruction = "Simplified Chinese (简体中文)";
+  } else if (lang === 'vi') {
+    langInstruction = "Vietnamese (Tiếng Việt)";
+  } else {
+    langInstruction = "English";
+  }
+
   const prompt = `
     You are an expert in Traditional Chinese BaZi (Four Pillars).
 
@@ -209,7 +219,11 @@ export const calculateBaZi = async (input: UserInput): Promise<BaZiResult> => {
     Gender: ${input.gender}
 
     1. Calculate True Solar Time (真太阳时).
-    2. Convert the date to Chinese Lunar Date (农历).
+    2. Convert the date to Lunar Date (农历). 
+       **IMPORTANT**: The lunarDate field must be formatted in ${langInstruction} language.
+       - For English: Use format like "Lunar: 5th day of 12th month, 1990" or similar
+       - For Chinese: Use format like "1990年腊月初五" (traditional Chinese format)
+       - For Vietnamese: Use format like "Ngày 5 tháng 12 năm 1990 (Âm lịch)" or similar
     3. Arrange the Year, Month, Day, and Hour pillars accurately based on Solar Time.
     4. Calculate the Start Age (起运岁数) and Direction (Forward/Backward).
     5. List the first 10 Big Luck (Da Yun) pillars.
@@ -275,7 +289,41 @@ export const calculateBaZi = async (input: UserInput): Promise<BaZiResult> => {
 // ------------------------------------------------------------------
 
 export const generateDestinyAnalysis = async (confirmedBaZi: BaZiResult, lang: Language = 'en'): Promise<AnalysisResult> => {
-  const langInstruction = lang === 'zh' ? "Simplified Chinese (简体中文)" : "English";
+  // Determine language instruction based on current web language
+  let langInstruction: string;
+  let sectionLabels: { [key: string]: string };
+  
+  if (lang === 'zh') {
+    langInstruction = "Simplified Chinese (简体中文)";
+    sectionLabels = {
+      crypto: "币圈交易运势",
+      personality: "性格分析",
+      career: "事业行业",
+      fengShui: "发展风水",
+      wealth: "财富层级",
+      marriage: "婚姻情感"
+    };
+  } else if (lang === 'vi') {
+    langInstruction = "Vietnamese (Tiếng Việt)";
+    sectionLabels = {
+      crypto: "Vận may Crypto & Web3",
+      personality: "Phân tích tính cách",
+      career: "Sự nghiệp & Ngành nghề",
+      fengShui: "Phong thủy phát triển",
+      wealth: "Mức độ tài sản",
+      marriage: "Hôn nhân & Tình cảm"
+    };
+  } else {
+    langInstruction = "English";
+    sectionLabels = {
+      crypto: "Crypto/Web3 Trading Luck",
+      personality: "Personality Analysis",
+      career: "Career/Industry",
+      fengShui: "Development Feng Shui",
+      wealth: "Wealth Level",
+      marriage: "Marriage/Emotion"
+    };
+  }
 
   // We explicitly provide the CONFIRMED bazi to the AI so it doesn't recalculate it differently.
   const baziString = JSON.stringify(confirmedBaZi.bazi);
@@ -316,15 +364,18 @@ export const generateDestinyAnalysis = async (confirmedBaZi: BaZiResult, lang: L
        - Create realistic volatility. Do not make all years green.
 
     3. Provide structured analysis for the following sections with a 1-10 rating:
-       - Crypto/Web3 Trading Luck (币圈交易运势)
-       - Personality Analysis (性格分析)
-       - Career/Industry (事业行业)
-       - Development Feng Shui (发展风水)
-       - Wealth Level (财富层级)
-       - Marriage/Emotion (婚姻情感)
+       - ${sectionLabels.crypto}
+       - ${sectionLabels.personality}
+       - ${sectionLabels.career}
+       - ${sectionLabels.fengShui}
+       - ${sectionLabels.wealth}
+       - ${sectionLabels.marriage}
     4. Provide a "Volatility Logic Analysis" paragraph explaining why the chart moves the way it does.
 
-    IMPORTANT: Output text in ${langInstruction}.
+    **CRITICAL LANGUAGE REQUIREMENT**: 
+    - ALL output text (including generalComment, content fields, summary, detailedReview, volatilityAnalysis) MUST be written in ${langInstruction}.
+    - Use natural, fluent ${lang === 'zh' ? 'Simplified Chinese' : lang === 'vi' ? 'Vietnamese' : 'English'} language.
+    - Do NOT mix languages. Write everything in ${langInstruction} only.
 
     ${useNativeGemini ? 'Return JSON matching the schema.' : analysisSchemaPrompt}
   `;

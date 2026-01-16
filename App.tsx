@@ -85,7 +85,7 @@ const App: React.FC = () => {
   const handleInitialSubmit = async (data: UserInput) => {
     setLoading(true);
     try {
-      const result = await calculateBaZi(data);
+      const result = await calculateBaZi(data, lang);
       setPreliminaryBaZi(result);
       setStep('confirmation');
     } catch (error: any) {

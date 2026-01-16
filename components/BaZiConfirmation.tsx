@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BaZiResult, Language, BaZiChart } from '../types';
+import { BaZiResult, Language, BaZiChart, Gender } from '../types';
 import { getTexts } from '../locales';
 import { CheckCircle, Clock, Calendar, Edit2, RotateCcw, PlayCircle } from 'lucide-react';
 
@@ -44,19 +44,32 @@ const EditablePillar: React.FC<EditablePillarProps> = ({ label, pillarKey, gan, 
   );
 };
 
+// Normalize direction value to "Forward" or "Backward" for consistency
+// Handles values in different languages from API
+const normalizeDirection = (dir: string): 'Forward' | 'Backward' => {
+  const dirLower = dir.toLowerCase();
+  if (dirLower.includes('forward') || dirLower.includes('顺') || dirLower.includes('thuận') || dirLower.includes('thuan')) {
+    return 'Forward';
+  }
+  if (dirLower.includes('backward') || dirLower.includes('逆') || dirLower.includes('nghịch') || dirLower.includes('nghich')) {
+    return 'Backward';
+  }
+  return 'Forward'; // default
+};
+
 const BaZiConfirmation: React.FC<BaZiConfirmationProps> = ({ data, onConfirm, onRetry, lang, isLoading }) => {
   const t = getTexts(lang);
   const [editableBaZi, setEditableBaZi] = useState<BaZiChart>(data.bazi);
   const [editableDaYun, setEditableDaYun] = useState<string[]>(data.daYun);
   const [editableStartAge, setEditableStartAge] = useState<number>(data.startAge);
-  const [editableDirection, setEditableDirection] = useState<string>(data.direction);
+  const [editableDirection, setEditableDirection] = useState<'Forward' | 'Backward'>(normalizeDirection(data.direction));
 
   // Sync state if data prop updates (e.g. re-calculation)
   useEffect(() => {
     setEditableBaZi(data.bazi);
     setEditableDaYun(data.daYun);
     setEditableStartAge(data.startAge);
-    setEditableDirection(data.direction);
+    setEditableDirection(normalizeDirection(data.direction));
   }, [data]);
 
   const handlePillarChange = (key: keyof BaZiChart, field: 'gan' | 'zhi', value: string) => {
@@ -106,7 +119,7 @@ const BaZiConfirmation: React.FC<BaZiConfirmationProps> = ({ data, onConfirm, on
         </div>
         <div>
              <span className="text-gray-400 dark:text-gray-500 block text-xs">{t.genderLabel}:</span>
-             {data.userInput.gender === 'Male' ? t.male : t.female}
+             {data.userInput.gender === Gender.MALE ? t.male : t.female}
         </div>
       </div>
 
@@ -115,7 +128,7 @@ const BaZiConfirmation: React.FC<BaZiConfirmationProps> = ({ data, onConfirm, on
         <Clock className="text-yellow-600 dark:text-yellow-500 w-5 h-5" />
         <div>
             <span className="font-bold text-slate-800 dark:text-slate-100 mr-2">{t.solarTime}: {data.solarTime}</span>
-            <span className="text-xs text-yellow-700 dark:text-yellow-400 opacity-80">(Used for Hour Pillar)</span>
+            <span className="text-xs text-yellow-700 dark:text-yellow-400 opacity-80">{t.solarTimeTip}</span>
         </div>
       </div>
 
@@ -184,7 +197,7 @@ const BaZiConfirmation: React.FC<BaZiConfirmationProps> = ({ data, onConfirm, on
                     <span className="text-xs text-gray-500 dark:text-gray-400">{t.direction}:</span>
                     <select
                         value={editableDirection}
-                        onChange={(e) => setEditableDirection(e.target.value)}
+                        onChange={(e) => setEditableDirection(e.target.value as 'Forward' | 'Backward')}
                         className="px-2 py-1 text-sm font-bold text-slate-800 dark:text-slate-100 bg-white dark:bg-slate-800 border border-purple-200 dark:border-purple-800 rounded hover:border-purple-400 dark:hover:border-purple-600 focus:border-purple-500 focus:outline-none transition-colors cursor-pointer"
                     >
                         <option value="Forward">{t.forward}</option>
