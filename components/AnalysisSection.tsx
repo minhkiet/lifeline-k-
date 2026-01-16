@@ -137,7 +137,7 @@ const AnalysisSection: React.FC<AnalysisSectionProps> = ({ analysis, lang, theme
             heightLeft -= pageHeight;
         }
 
-        pdf.save(`${lang === 'zh' ? '人生K线报告' : 'Life_K_Line_Report'}.pdf`);
+        pdf.save(`${lang === 'zh' ? '人生K线报告' : lang === 'vi' ? 'Bao_cao_K_Line_Cuoc_Doi' : 'Life_K_Line_Report'}.pdf`);
 
     } catch (error) {
         console.error("PDF Generation failed", error);
@@ -218,7 +218,7 @@ const AnalysisSection: React.FC<AnalysisSectionProps> = ({ analysis, lang, theme
                 <div key={index} className="flex gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors border-b border-gray-50 dark:border-slate-700 last:border-0">
                     <div className="flex-shrink-0 w-16 text-center">
                         <div className="font-bold text-lg text-slate-800 dark:text-slate-100">{year.year}</div>
-                        <div className="text-xs text-gray-400 dark:text-gray-500">{year.age} {lang === 'zh' ? '岁' : 'y/o'}</div>
+                        <div className="text-xs text-gray-400 dark:text-gray-500">{year.age} {lang === 'zh' ? '岁' : lang === 'vi' ? 'tuổi' : 'y/o'}</div>
                     </div>
                     <div>
                         <div className="flex items-center gap-2 mb-1">
@@ -240,7 +240,7 @@ const AnalysisSection: React.FC<AnalysisSectionProps> = ({ analysis, lang, theme
             className="flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-slate-700 text-white rounded-full font-medium hover:bg-gray-800 dark:hover:bg-slate-600 transition-colors shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
         >
             {isGeneratingPdf ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-            {isGeneratingPdf ? (lang === 'zh' ? '生成中...' : 'Generating...') : t.savePdf}
+            {isGeneratingPdf ? (lang === 'zh' ? '生成中...' : lang === 'vi' ? 'Đang tạo...' : 'Generating...') : t.savePdf}
         </button>
       </div>
     </div>

@@ -1,10 +1,11 @@
 import React from 'react';
 import { AlertCircle, X } from 'lucide-react';
+import { Language } from '../types';
 
 interface ApiQuotaDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  lang: 'zh' | 'en';
+  lang: Language;
 }
 
 const ApiQuotaDialog: React.FC<ApiQuotaDialogProps> = ({ isOpen, onClose, lang }) => {
@@ -28,6 +29,15 @@ const ApiQuotaDialog: React.FC<ApiQuotaDialogProps> = ({ isOpen, onClose, lang }
       option1: 'Try again later (should be restored soon)',
       option2: 'Follow the project for latest updates',
       closeButton: 'Got it',
+    },
+    vi: {
+      title: 'Hạn mức API tạm thời hết',
+      message: 'Xin lỗi, hiện tại hạn mức API đã hết!',
+      note: 'Nhà phát triển đang nỗ lực khôi phục hạn mức API. Vui lòng quay lại sau~',
+      suggestion: 'Bạn có thể:',
+      option1: 'Thử lại sau (dự kiến sẽ được khôi phục sớm)',
+      option2: 'Theo dõi dự án để nhận cập nhật mới nhất',
+      closeButton: 'Đã hiểu',
     }
   };
 

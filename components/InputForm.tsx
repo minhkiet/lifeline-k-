@@ -50,7 +50,7 @@ const InputForm: React.FC<InputFormProps> = ({ onSubmit, isLoading, lang }) => {
               value={formData.name}
               onChange={handleChange}
               className="block w-full pl-10 pr-3 py-3 border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-purple-500 focus:border-purple-500 dark:bg-slate-700 dark:text-white dark:placeholder-gray-400 transition-colors"
-              placeholder={lang === 'zh' ? "您的姓名" : "Your Name"}
+              placeholder={lang === 'zh' ? "您的姓名" : lang === 'vi' ? "Tên của bạn" : "Your Name"}
             />
           </div>
         </div>

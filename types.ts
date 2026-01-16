@@ -3,7 +3,7 @@ export enum Gender {
   FEMALE = 'Female',
 }
 
-export type Language = 'en' | 'zh';
+export type Language = 'en' | 'zh' | 'vi';
 
 export interface UserInput {
   name: string;

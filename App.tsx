@@ -30,7 +30,15 @@ const App: React.FC = () => {
     return 'dark';
   });
 
-  const [lang, setLang] = useState<Language>('zh'); 
+  const [lang, setLang] = useState<Language>(() => {
+    if (typeof window !== 'undefined') {
+      const savedLang = localStorage.getItem('language');
+      if (savedLang && (savedLang === 'en' || savedLang === 'zh' || savedLang === 'vi')) {
+        return savedLang as Language;
+      }
+    }
+    return 'zh';
+  }); 
 
   const [preliminaryBaZi, setPreliminaryBaZi] = useState<BaZiResult | null>(null);
   const [analysis, setAnalysis] = useState<AnalysisResult | null>(null);
@@ -53,8 +61,24 @@ const App: React.FC = () => {
   };
 
   const toggleLanguage = () => {
-    setLang(prev => prev === 'en' ? 'zh' : 'en');
+    setLang(prev => {
+      let newLang: Language;
+      if (prev === 'en') newLang = 'zh';
+      else if (prev === 'zh') newLang = 'vi';
+      else newLang = 'en';
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('language', newLang);
+      }
+      return newLang;
+    });
   };
+
+  // Effect to save language preference
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('language', lang);
+    }
+  }, [lang]);
 
   // Step 1: Calculate BaZi
   const handleInitialSubmit = async (data: UserInput) => {
@@ -113,7 +137,7 @@ const App: React.FC = () => {
               </div>
               <div>
                   <h1 className="font-bold text-white text-lg leading-none">{t.appTitle}</h1>
-                  <p className="text-[10px] text-gray-400 font-medium tracking-wider uppercase">AI Destiny Analysis</p>
+                  <p className="text-[10px] text-gray-400 font-medium tracking-wider uppercase">{t.appSubtitle}</p>
               </div>
             </div>
 
@@ -156,8 +180,12 @@ const App: React.FC = () => {
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-800 hover:bg-slate-700 text-gray-200 text-xs font-medium transition-colors"
                >
                   <Languages size={14} className="hidden sm:inline" />
-                  <span className="hidden sm:inline">{lang === 'en' ? '中文' : 'English'}</span>
-                  <span className="sm:hidden">{lang === 'en' ? 'CN' : 'EN'}</span>
+                  <span className="hidden sm:inline">
+                    {lang === 'en' ? '中文' : lang === 'zh' ? 'Tiếng Việt' : 'English'}
+                  </span>
+                  <span className="sm:hidden">
+                    {lang === 'en' ? 'CN' : lang === 'zh' ? 'VI' : 'EN'}
+                  </span>
                </button>
             </div>
           </div>
@@ -179,7 +207,7 @@ const App: React.FC = () => {
             </div>
             <div>
                 <h1 className="font-bold text-gray-900 dark:text-white text-lg leading-none transition-colors">{t.appTitle}</h1>
-                <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium tracking-wider uppercase transition-colors">AI Destiny Analysis</p>
+                <p className="text-[10px] text-gray-500 dark:text-gray-400 font-medium tracking-wider uppercase transition-colors">{t.appSubtitle}</p>
             </div>
           </div>
           
@@ -222,8 +250,12 @@ const App: React.FC = () => {
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-100 dark:bg-slate-700 hover:bg-gray-200 dark:hover:bg-slate-600 text-gray-700 dark:text-gray-200 text-xs font-medium transition-colors"
              >
                 <Languages size={14} className="hidden sm:inline" />
-                <span className="hidden sm:inline">{lang === 'en' ? '中文' : 'English'}</span>
-                <span className="sm:hidden">{lang === 'en' ? 'CN' : 'EN'}</span>
+                <span className="hidden sm:inline">
+                  {lang === 'en' ? '中文' : lang === 'zh' ? 'Tiếng Việt' : 'English'}
+                </span>
+                <span className="sm:hidden">
+                  {lang === 'en' ? 'CN' : lang === 'zh' ? 'VI' : 'EN'}
+                </span>
              </button>
 
              {step !== 'input' && (
