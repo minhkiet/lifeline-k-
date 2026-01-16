@@ -6,14 +6,15 @@ import BaZiConfirmation from './components/BaZiConfirmation';
 import KLineChart from './components/KLineChart';
 import AnalysisSection from './components/AnalysisSection';
 import ApiQuotaDialog from './components/ApiQuotaDialog';
+import ApiTest from './components/ApiTest';
 import { UserInput, AnalysisResult, Language, BaZiResult } from './types';
 import { calculateBaZi, generateDestinyAnalysis } from './services/geminiService';
-import { Sparkles, Languages, Moon, Sun } from 'lucide-react';
+import { Sparkles, Languages, Moon, Sun, TestTube } from 'lucide-react';
 import { Github } from 'lucide-react';
 import { getTexts } from './locales';
 
 const App: React.FC = () => {
-  const [step, setStep] = useState<'landing' | 'input' | 'confirmation' | 'result'>('landing');
+  const [step, setStep] = useState<'landing' | 'input' | 'confirmation' | 'result' | 'test'>('landing');
   const [loading, setLoading] = useState(false);
   const [showQuotaDialog, setShowQuotaDialog] = useState(false);
 
@@ -37,7 +38,7 @@ const App: React.FC = () => {
         return savedLang as Language;
       }
     }
-    return 'zh';
+    return 'vi';
   }); 
 
   const [preliminaryBaZi, setPreliminaryBaZi] = useState<BaZiResult | null>(null);
@@ -187,11 +188,34 @@ const App: React.FC = () => {
                     {lang === 'en' ? 'CN' : lang === 'zh' ? 'VI' : 'EN'}
                   </span>
                </button>
+
+               {/* API Test Button */}
+               <button
+                  onClick={() => setStep('test')}
+                  className="p-2 rounded-full bg-slate-800 text-gray-300 hover:bg-slate-700 transition-colors"
+                  title="Test API Connection"
+               >
+                  <TestTube size={16} />
+               </button>
             </div>
           </div>
         </header>
 
-        <LandingPage onGetStarted={handleGetStarted} lang={lang} />
+        {step === 'test' ? (
+          <div className="min-h-screen py-8">
+            <div className="max-w-6xl mx-auto px-4">
+              <button
+                onClick={() => setStep('landing')}
+                className="mb-4 text-gray-400 hover:text-white transition-colors"
+              >
+                ← Quay lại
+              </button>
+              <ApiTest />
+            </div>
+          </div>
+        ) : (
+          <LandingPage onGetStarted={handleGetStarted} lang={lang} />
+        )}
       </div>
     );
   }
@@ -258,6 +282,15 @@ const App: React.FC = () => {
                 </span>
              </button>
 
+             {/* API Test Button */}
+             <button
+                onClick={() => setStep('test')}
+                className="p-2 rounded-full bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-slate-600 transition-colors"
+                title="Test API Connection"
+             >
+                <TestTube size={16} />
+             </button>
+
              {step !== 'input' && (
                 <button
                     onClick={handleReset}
@@ -272,6 +305,10 @@ const App: React.FC = () => {
 
       {/* Main Content */}
       <main className="flex-grow container mx-auto px-4 py-10 max-w-5xl">
+        {step === 'test' && (
+            <ApiTest />
+        )}
+
         {step === 'input' && (
             <div className="flex flex-col items-center justify-center min-h-[60vh] animate-fade-in">
                 {/* Hero Section */}
