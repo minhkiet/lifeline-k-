@@ -19,23 +19,37 @@ interface EditablePillarProps {
   gan: string;
   zhi: string;
   onChange: (key: keyof BaZiChart, field: 'gan' | 'zhi', value: string) => void;
+  heavenlyStemLabel: string;
+  earthlyBranchLabel: string;
 }
 
-const EditablePillar: React.FC<EditablePillarProps> = ({ label, pillarKey, gan, zhi, onChange }) => {
+const EditablePillar: React.FC<EditablePillarProps> = ({ label, pillarKey, gan, zhi, onChange, heavenlyStemLabel, earthlyBranchLabel }) => {
   return (
     <div className="flex flex-col items-center bg-purple-50 dark:bg-purple-900/20 rounded-xl p-3 border border-purple-100 dark:border-purple-800/50 min-w-[80px] w-full relative group hover:shadow-md transition-all">
-      <span className="text-xs text-purple-600 dark:text-purple-300 font-medium mb-2 uppercase tracking-wide">{label}</span>
+      <span className="text-xs text-purple-600 dark:text-purple-300 font-medium mb-2 tracking-wide">{label}</span>
       <div className="flex flex-col items-center gap-2 w-full">
-          <input 
-              value={gan}
-              onChange={(e) => onChange(pillarKey, 'gan', e.target.value)}
-              className="w-16 text-center text-2xl font-bold text-slate-800 dark:text-slate-100 serif bg-transparent border-b border-transparent hover:border-purple-300 focus:border-purple-500 focus:outline-none transition-colors"
-          />
-          <input 
-              value={zhi}
-              onChange={(e) => onChange(pillarKey, 'zhi', e.target.value)}
-              className="w-16 text-center text-2xl font-bold text-slate-800 dark:text-slate-100 serif bg-transparent border-b border-transparent hover:border-purple-300 focus:border-purple-500 focus:outline-none transition-colors"
-          />
+          <div className="flex flex-col items-center w-full">
+              <input 
+                  value={gan}
+                  onChange={(e) => onChange(pillarKey, 'gan', e.target.value)}
+                  aria-label={`${label} ${heavenlyStemLabel}`}
+                  title={`${label} ${heavenlyStemLabel}`}
+                  placeholder="甲"
+                  className="w-16 text-center text-2xl font-bold text-slate-800 dark:text-slate-100 serif bg-transparent border-b border-transparent hover:border-purple-300 focus:border-purple-500 focus:outline-none transition-colors placeholder:text-gray-300 dark:placeholder:text-gray-600"
+              />
+              <span className="text-[9px] text-purple-500 dark:text-purple-400 mt-0.5 opacity-70">{heavenlyStemLabel}</span>
+          </div>
+          <div className="flex flex-col items-center w-full">
+              <input 
+                  value={zhi}
+                  onChange={(e) => onChange(pillarKey, 'zhi', e.target.value)}
+                  aria-label={`${label} ${earthlyBranchLabel}`}
+                  title={`${label} ${earthlyBranchLabel}`}
+                  placeholder="子"
+                  className="w-16 text-center text-2xl font-bold text-slate-800 dark:text-slate-100 serif bg-transparent border-b border-transparent hover:border-purple-300 focus:border-purple-500 focus:outline-none transition-colors placeholder:text-gray-300 dark:placeholder:text-gray-600"
+              />
+              <span className="text-[9px] text-purple-500 dark:text-purple-400 mt-0.5 opacity-70">{earthlyBranchLabel}</span>
+          </div>
       </div>
       <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 pointer-events-none">
           <Edit2 className="w-3 h-3 text-purple-300" />
@@ -146,28 +160,36 @@ const BaZiConfirmation: React.FC<BaZiConfirmationProps> = ({ data, onConfirm, on
               pillarKey="year" 
               gan={editableBaZi.year.gan} 
               zhi={editableBaZi.year.zhi} 
-              onChange={handlePillarChange} 
+              onChange={handlePillarChange}
+              heavenlyStemLabel={t.heavenlyStem}
+              earthlyBranchLabel={t.earthlyBranch}
             />
             <EditablePillar 
               label={t.month} 
               pillarKey="month" 
               gan={editableBaZi.month.gan} 
               zhi={editableBaZi.month.zhi} 
-              onChange={handlePillarChange} 
+              onChange={handlePillarChange}
+              heavenlyStemLabel={t.heavenlyStem}
+              earthlyBranchLabel={t.earthlyBranch}
             />
             <EditablePillar 
               label={t.day} 
               pillarKey="day" 
               gan={editableBaZi.day.gan} 
               zhi={editableBaZi.day.zhi} 
-              onChange={handlePillarChange} 
+              onChange={handlePillarChange}
+              heavenlyStemLabel={t.heavenlyStem}
+              earthlyBranchLabel={t.earthlyBranch}
             />
             <EditablePillar 
               label={t.hour} 
               pillarKey="hour" 
               gan={editableBaZi.hour.gan} 
               zhi={editableBaZi.hour.zhi} 
-              onChange={handlePillarChange} 
+              onChange={handlePillarChange}
+              heavenlyStemLabel={t.heavenlyStem}
+              earthlyBranchLabel={t.earthlyBranch}
             />
         </div>
       </div>
@@ -219,7 +241,10 @@ const BaZiConfirmation: React.FC<BaZiConfirmationProps> = ({ data, onConfirm, on
                             newDaYun[idx] = e.target.value;
                             setEditableDaYun(newDaYun);
                         }}
-                        className="w-full text-center text-lg font-bold text-slate-700 dark:text-slate-200 serif bg-transparent border-b border-transparent hover:border-purple-300 focus:border-purple-500 focus:outline-none transition-colors p-0"
+                        aria-label={`${t.daYunPillar} ${idx + 1}`}
+                        title={`${t.daYunPillar} ${idx + 1}`}
+                        placeholder="甲子"
+                        className="w-full text-center text-lg font-bold text-slate-700 dark:text-slate-200 serif bg-transparent border-b border-transparent hover:border-purple-300 focus:border-purple-500 focus:outline-none transition-colors p-0 placeholder:text-gray-300 dark:placeholder:text-gray-600"
                     />
                     <div className="absolute top-1 right-1 opacity-0 group-hover:opacity-100 pointer-events-none">
                         <Edit2 className="w-2.5 h-2.5 text-purple-300" />

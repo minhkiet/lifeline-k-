@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { UserInput, Gender, Language } from '../types';
 import { Calendar, Clock, MapPin, User } from 'lucide-react';
 import { getTexts } from '../locales';
+import { getGanZhi, getLunarDateString } from '../services/lunarService';
 
 interface InputFormProps {
   onSubmit: (data: UserInput) => void;
@@ -18,15 +19,50 @@ const InputForm: React.FC<InputFormProps> = ({ onSubmit, isLoading, lang }) => {
     birthTime: '00:00',
     birthLocation: '',
   });
+  const [isCalculating, setIsCalculating] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    
+    // Tính toán BaZi và ngày âm lịch local trước khi submit
+    setIsCalculating(true);
+    try {
+      // Tính toán Can Chi (BaZi) local
+      const ganZhi = await getGanZhi(formData.birthDate, formData.birthTime);
+      
+      // Tính toán ngày âm lịch local
+      const lunarDateLang = lang === 'zh' ? 'zh' : lang === 'vi' ? 'vi' : 'en';
+      const lunarDate = await getLunarDateString(formData.birthDate, formData.birthTime, lunarDateLang);
+      
+      // Lưu kết quả tính toán local vào formData để API có thể sử dụng
+      // Tạo một object mở rộng với thông tin đã tính toán
+      const enrichedData = {
+        ...formData,
+        // Lưu thông tin đã tính toán local để API có thể sử dụng
+        _localCalculation: {
+          bazi: {
+            year: ganZhi.year,
+            month: ganZhi.month,
+            day: ganZhi.day,
+            hour: ganZhi.hour,
+          },
+          lunarDate: lunarDate,
+        }
+      };
+      
+      onSubmit(enrichedData as any);
+    } catch (error) {
+      console.error('Error calculating BaZi locally:', error);
+      // Nếu tính toán local thất bại, vẫn submit với dữ liệu gốc
+      onSubmit(formData);
+    } finally {
+      setIsCalculating(false);
+    }
   };
 
   return (
@@ -141,16 +177,16 @@ const InputForm: React.FC<InputFormProps> = ({ onSubmit, isLoading, lang }) => {
 
         <button
           type="submit"
-          disabled={isLoading}
+          disabled={isLoading || isCalculating}
           className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl hover:scale-[1.02] transform transition-all disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center"
         >
-          {isLoading ? (
+          {isLoading || isCalculating ? (
             <>
               <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
               </svg>
-              {t.loading}
+              {isCalculating ? (lang === 'zh' ? '计算中...' : lang === 'vi' ? 'Đang tính toán...' : 'Calculating...') : t.loading}
             </>
           ) : (
             `✨ ${t.submitButton}`

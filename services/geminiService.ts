@@ -209,7 +209,13 @@ export const calculateBaZi = async (input: UserInput, lang: Language = 'en'): Pr
     langInstruction = "English";
   }
 
-  const prompt = `
+  // Kiểm tra xem có dữ liệu đã tính toán local không
+  const localCalc = (input as any)._localCalculation;
+  const hasLocalBazi = localCalc?.bazi;
+  const hasLocalLunarDate = localCalc?.lunarDate;
+
+  // Xây dựng prompt tối ưu dựa trên dữ liệu đã có
+  let prompt = `
     You are an expert in Traditional Chinese BaZi (Four Pillars).
 
     Calculate the BaZi chart for:
@@ -217,7 +223,39 @@ export const calculateBaZi = async (input: UserInput, lang: Language = 'en'): Pr
     Clock Time: ${input.birthTime}
     Location: ${input.birthLocation} (Use this to calculate True Solar Time deviation from UTC/Standard time)
     Gender: ${input.gender}
+  `;
 
+  if (hasLocalBazi && hasLocalLunarDate) {
+    // Nếu đã có BaZi và ngày âm lịch tính local, chỉ cần tính các phần còn lại
+    prompt += `
+    **IMPORTANT**: The following data has been pre-calculated locally and is ACCURATE:
+    - Lunar Date: ${localCalc.lunarDate}
+    - BaZi Chart:
+      Year: ${localCalc.bazi.year.gan}${localCalc.bazi.year.zhi}
+      Month: ${localCalc.bazi.month.gan}${localCalc.bazi.month.zhi}
+      Day: ${localCalc.bazi.day.gan}${localCalc.bazi.day.zhi}
+      Hour: ${localCalc.bazi.hour.gan}${localCalc.bazi.hour.zhi}
+
+    You MUST use these pre-calculated values. Do NOT recalculate them.
+
+    1. Calculate True Solar Time (真太阳时) based on the location.
+    2. Use the pre-calculated Lunar Date: ${localCalc.lunarDate}
+    3. Use the pre-calculated BaZi Chart (Year, Month, Day, Hour pillars).
+    4. Calculate ONLY the Start Age (起运岁数) and Direction (Forward/Backward) based on Gender and Year Stem.
+    5. Calculate ONLY the first 10 Big Luck (Da Yun) pillars based on the BaZi chart and direction.
+
+    Return the lunarDate as: "${localCalc.lunarDate}"
+    Return the bazi as:
+    {
+      "year": { "gan": "${localCalc.bazi.year.gan}", "zhi": "${localCalc.bazi.year.zhi}" },
+      "month": { "gan": "${localCalc.bazi.month.gan}", "zhi": "${localCalc.bazi.month.zhi}" },
+      "day": { "gan": "${localCalc.bazi.day.gan}", "zhi": "${localCalc.bazi.day.zhi}" },
+      "hour": { "gan": "${localCalc.bazi.hour.gan}", "zhi": "${localCalc.bazi.hour.zhi}" }
+    }
+    `;
+  } else {
+    // Nếu chưa có dữ liệu local, tính toán đầy đủ như cũ
+    prompt += `
     1. Calculate True Solar Time (真太阳时).
     2. Convert the date to Lunar Date (农历). 
        **IMPORTANT**: The lunarDate field must be formatted in ${langInstruction} language.
@@ -227,9 +265,10 @@ export const calculateBaZi = async (input: UserInput, lang: Language = 'en'): Pr
     3. Arrange the Year, Month, Day, and Hour pillars accurately based on Solar Time.
     4. Calculate the Start Age (起运岁数) and Direction (Forward/Backward).
     5. List the first 10 Big Luck (Da Yun) pillars.
+    `;
+  }
 
-    ${useNativeGemini ? 'Return JSON only.' : baziCalculationSchemaPrompt}
-  `;
+  prompt += `\n${useNativeGemini ? 'Return JSON only.' : baziCalculationSchemaPrompt}`;
 
   try {
     let text: string | null = null;
@@ -266,9 +305,28 @@ export const calculateBaZi = async (input: UserInput, lang: Language = 'en'): Pr
 
     if (text) {
       const data = JSON.parse(text);
+      
+      // Tạo userInput sạch (không có _localCalculation)
+      const { _localCalculation, ...cleanUserInput } = input as any;
+      
+      // Nếu có dữ liệu local, đảm bảo sử dụng chúng (tránh API tính sai)
+      if (hasLocalBazi && hasLocalLunarDate) {
+        return {
+          ...data,
+          lunarDate: localCalc.lunarDate, // Sử dụng ngày âm lịch đã tính local
+          bazi: {
+            year: { gan: localCalc.bazi.year.gan, zhi: localCalc.bazi.year.zhi },
+            month: { gan: localCalc.bazi.month.gan, zhi: localCalc.bazi.month.zhi },
+            day: { gan: localCalc.bazi.day.gan, zhi: localCalc.bazi.day.zhi },
+            hour: { gan: localCalc.bazi.hour.gan, zhi: localCalc.bazi.hour.zhi },
+          },
+          userInput: cleanUserInput as UserInput
+        };
+      }
+      
       return {
         ...data,
-        userInput: input
+        userInput: cleanUserInput as UserInput
       };
     }
     throw new Error("Failed to calculate BaZi");

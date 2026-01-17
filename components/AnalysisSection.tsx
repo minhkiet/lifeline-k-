@@ -85,10 +85,10 @@ const AnalysisSection: React.FC<AnalysisSectionProps> = ({ analysis, lang, theme
         scrollables.forEach((el) => {
             scrollableAdjustments.push({
                 el,
-                maxHeight: el.style.maxHeight,
-                overflowY: el.style.overflowY,
-                height: el.style.height,
-                paddingRight: el.style.paddingRight,
+                maxHeight: el.style.maxHeight || '',
+                overflowY: el.style.overflowY || '',
+                height: el.style.height || '',
+                paddingRight: el.style.paddingRight || '',
             });
             el.style.maxHeight = 'none';
             el.style.overflowY = 'visible';
@@ -107,9 +107,14 @@ const AnalysisSection: React.FC<AnalysisSectionProps> = ({ analysis, lang, theme
             logging: false,
             ignoreElements: (el) => {
                 // Ignore print:hidden elements, buttons, and any element with data-html2canvas-ignore
-                return el.classList.contains('print:hidden') ||
-                       el.hasAttribute('data-html2canvas-ignore') ||
-                       (el.tagName === 'DIV' && el.style.position === 'fixed' && el.style.zIndex === '9999');
+                if (el.classList.contains('print:hidden') || el.hasAttribute('data-html2canvas-ignore')) {
+                    return true;
+                }
+                if (el.tagName === 'DIV') {
+                    const htmlEl = el as HTMLElement;
+                    return htmlEl.style.position === 'fixed' && htmlEl.style.zIndex === '9999';
+                }
+                return false;
             }
         });
 
@@ -218,7 +223,7 @@ const AnalysisSection: React.FC<AnalysisSectionProps> = ({ analysis, lang, theme
                 <div key={index} className="flex gap-4 p-4 rounded-xl hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors border-b border-gray-50 dark:border-slate-700 last:border-0">
                     <div className="flex-shrink-0 w-16 text-center">
                         <div className="font-bold text-lg text-slate-800 dark:text-slate-100">{year.year}</div>
-                        <div className="text-xs text-gray-400 dark:text-gray-500">{year.age} {lang === 'zh' ? '岁' : lang === 'vi' ? 'tuổi' : 'y/o'}</div>
+                        <div className="text-xs text-gray-400 dark:text-gray-500">{year.age} {t.ageUnit}</div>
                     </div>
                     <div>
                         <div className="flex items-center gap-2 mb-1">
@@ -240,7 +245,7 @@ const AnalysisSection: React.FC<AnalysisSectionProps> = ({ analysis, lang, theme
             className="flex items-center gap-2 px-6 py-3 bg-gray-900 dark:bg-slate-700 text-white rounded-full font-medium hover:bg-gray-800 dark:hover:bg-slate-600 transition-colors shadow-lg disabled:opacity-70 disabled:cursor-not-allowed"
         >
             {isGeneratingPdf ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
-            {isGeneratingPdf ? (lang === 'zh' ? '生成中...' : lang === 'vi' ? 'Đang tạo...' : 'Generating...') : t.savePdf}
+            {isGeneratingPdf ? t.generatingPdf : t.savePdf}
         </button>
       </div>
     </div>

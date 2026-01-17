@@ -38,9 +38,9 @@ const CustomTooltip = ({ active, payload, lang, theme }: any) => {
     return (
       <div className={`${bgClass} p-4 border shadow-xl rounded-lg max-w-[250px] z-50`}>
         <div className="flex justify-between items-center mb-2">
-            <h4 className={`font-bold ${textTitleClass}`}>{data.year} <span className={`text-sm font-normal ${subTextClass}`}>({data.age} {lang === 'zh' ? '岁' : lang === 'vi' ? 'tuổi' : 'y/o'})</span></h4>
+            <h4 className={`font-bold ${textTitleClass}`}>{data.year} <span className={`text-sm font-normal ${subTextClass}`}>({data.age} {t.ageUnit})</span></h4>
             <span className={`text-xs font-bold px-2 py-0.5 rounded ${isBull ? 'bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-400' : 'bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-400'}`}>
-                {isBull ? 'BULL' : 'BEAR'}
+                {isBull ? t.bullMarket : t.bearMarket}
             </span>
         </div>
         
